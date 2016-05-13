@@ -428,11 +428,8 @@ end
 -- @tparam[opt] func args.callback Function that will be called with all arguments.
 --   The notification will only be displayed if the function returns true.
 --   Note: this function is only relevant to notifications sent via dbus.
--- @tparam[opt] table args.actions Table describing all of the actions that are
---   supported by the notification client. The table key is an action identifier.
---   The table value is a record table indexed by two keys: `text` is a localized
---   description string which is displayed to a user, and `callback` is a function
---   called when this action is selected.
+-- @tparam[opt] table args.actions Mapping that maps a string to a callback when this
+--   action is selected.
 -- @usage naughty.notify({ title = "Achtung!", text = "You're idling", timeout = 0 })
 -- @treturn ?table The notification object, or nil in case a notification was
 --   not displayed.
@@ -539,22 +536,22 @@ function naughty.notify(args)
     local actions_max_width = 0
     local actions_total_height = 0
     if actions then
-        for _, action in pairs(actions) do
+        for action, callback in pairs(actions) do
             local actiontextbox = wibox.widget.textbox()
             local actionmarginbox = wibox.layout.margin()
             actionmarginbox:set_margins(margin)
             actionmarginbox:set_widget(actiontextbox)
             actiontextbox:set_valign("middle")
             actiontextbox:set_font(font)
-            actiontextbox:set_markup(string.format('☛ <u>%s</u>', action.text))
+            actiontextbox:set_markup(string.format('☛ <u>%s</u>', action))
             -- calculate the height and width
             local w, h = actiontextbox:get_preferred_size(s)
             local action_height = h + 2 * margin
             local action_width = w + 2 * margin
 
             actionmarginbox:buttons(util.table.join(
-                button({ }, 1, action.callback),
-                button({ }, 3, action.callback)
+                button({ }, 1, callback),
+                button({ }, 3, callback)
                 ))
             actionslayout:add(actionmarginbox)
 

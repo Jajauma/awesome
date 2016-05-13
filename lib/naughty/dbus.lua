@@ -147,13 +147,10 @@ capi.dbus.connect_signal("org.freedesktop.Notifications", function (data, appnam
                         naughty.destroy(notification, naughty.notificationClosedReason.dismissedByUser)
                     end
                 elseif action_id ~= nil and action_text ~= nil then
-                    args.actions[action_id] = {
-                        text = action_text,
-                        callback = function()
-                            sendActionInvoked(notification.id, action_id)
-                            naughty.destroy(notification, naughty.notificationClosedReason.dismissedByUser)
-                        end
-                    }
+                    args.actions[action_text] = function()
+                        sendActionInvoked(notification.id, action_id)
+                        naughty.destroy(notification, naughty.notificationClosedReason.dismissedByUser)
+                    end
                 end
             end
         end
