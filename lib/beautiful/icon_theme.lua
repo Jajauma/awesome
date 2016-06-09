@@ -214,6 +214,14 @@ local lookup_fallback_icon = function(self, icon_name)
                 return filename
             end
         end
+
+        -- Check the icon name without any extensions supplied if nothing was
+        -- found so far; this could make some cases of obscure or plain legacy
+        -- desktop files (with e.g. Icon=name.png) just work.
+        local filename = string.format("%s/%s", dir, icon_name)
+        if awful_util.file_readable(filename) then
+            return filename
+        end
     end
     return nil
 end
