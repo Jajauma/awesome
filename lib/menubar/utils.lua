@@ -209,7 +209,7 @@ function utils.parse_desktop_file(file)
 
     -- Look up for a icon.
     if program.Icon then
-        program.icon_path = utils.lookup_icon(program.Icon)
+        program.icon_path = theme.get_icon_provider():find_icon_path(program.Icon)
     end
 
     -- Split categories into a table. Categories are written in one
