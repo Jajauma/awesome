@@ -5,14 +5,14 @@
 
 local os = os
 local string = string
-local icon_theme = require("menubar.icon_theme")
+local icon_theme = require("beautiful.icon_theme")
 
 local base_directories = {
-    os.getenv("PWD") .. "/spec/menubar/icons",
+    os.getenv("PWD") .. "/spec/beautiful/icons",
     os.getenv("PWD") .. "/icons"
 }
 
-describe("menubar.icon_theme find_icon_path", function()
+describe("beautiful.icon_theme find_icon_path", function()
     local obj
     before_each(function()
         obj = icon_theme("awesome", base_directories)

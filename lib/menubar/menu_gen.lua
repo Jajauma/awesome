@@ -9,7 +9,7 @@
 
 -- Grab environment
 local utils = require("menubar.utils")
-local icon_theme = require("menubar.icon_theme")
+local icon_theme = require("beautiful.icon_theme")
 local pairs = pairs
 local ipairs = ipairs
 local string = string

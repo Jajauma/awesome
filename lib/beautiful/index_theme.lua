@@ -4,7 +4,7 @@
 -- @author Kazunobu Kuriyama
 -- @copyright 2015 Kazunobu Kuriyama
 -- @release @AWESOME_VERSION@
--- @classmod menubar.index_theme
+-- @classmod beautiful.index_theme
 ---------------------------------------------------------------------------
 
 -- This implementation is based on the specifications:

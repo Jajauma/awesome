@@ -4,7 +4,7 @@
 -- @author Kazunobu Kuriyama
 -- @copyright 2015 Kazunobu Kuriyama
 -- @release @AWESOME_VERSION@
--- @classmod menubar.icon_theme
+-- @classmod beautiful.icon_theme
 ---------------------------------------------------------------------------
 
 -- This implementation is based on the specifications:
@@ -14,7 +14,7 @@
 local beautiful = require("beautiful")
 local awful_util = require("awful.util")
 local GLib = require("lgi").GLib
-local index_theme = require("menubar.index_theme")
+local index_theme = require("beautiful.index_theme")
 
 local ipairs = ipairs
 local setmetatable = setmetatable
