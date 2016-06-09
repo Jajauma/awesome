@@ -228,6 +228,14 @@ function icon_theme:find_icon_path(icon_name, icon_size)
         return nil
     end
 
+    if icon_name:sub(1, 1) == '/' then
+        -- If the path to the icon is absolute and its format is
+        -- supported, do not perform a lookup.
+        if awful_util.file_readable(icon_name) then
+            return icon_name
+        end
+    end
+
     local filename = find_icon_path_helper(self, icon_name, icon_size)
     if filename then
         return filename
