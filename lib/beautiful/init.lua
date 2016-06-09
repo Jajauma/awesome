@@ -29,6 +29,7 @@ local theme = {}
 local descs = setmetatable({}, { __mode = 'k' })
 local fonts = setmetatable({}, { __mode = 'v' })
 local active_font
+local icon_provider = nil
 
 --- Load a font from a string or a font description.
 --
@@ -144,6 +145,17 @@ end
 -- @treturn table The current theme table.
 function beautiful.get()
     return theme
+end
+
+--- Get the system icon provider table. This currently returns a static instance
+-- of beautiful.icon_theme module.
+--
+-- @treturn table The icon provider table.
+function beautiful.get_icon_provider()
+    if not icon_provider then
+        icon_provider = require("beautiful.icon_theme").new()
+    end
+    return icon_provider
 end
 
 function beautiful.mt:__index(k)
