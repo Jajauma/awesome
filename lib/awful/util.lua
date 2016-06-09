@@ -223,12 +223,15 @@ end
 --- Search for an icon and return the full path.
 -- It searches for the icon path under the given directories with respect to the
 -- given extensions for the icon filename.
+-- @deprecated awful.util.geticonpath
 -- @param iconname The name of the icon to search for.
 -- @param exts Table of image extensions allowed, otherwise { 'png', gif' }
 -- @param dirs Table of dirs to search, otherwise { '/usr/share/pixmaps/' }
 -- @tparam[opt] string size The size. If this is specified, subdirectories `x`
 --   of the dirs are searched first.
 function util.geticonpath(iconname, exts, dirs, size)
+    util.deprecate("beautiful.get_icon_provider")
+
     exts = exts or { 'png', 'gif' }
     dirs = dirs or { '/usr/share/pixmaps/', '/usr/share/icons/hicolor/' }
     local icontypes = { 'apps', 'actions',  'categories',  'emblems',
