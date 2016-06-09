@@ -9,7 +9,7 @@
 
 -- Grab environment
 local utils = require("menubar.utils")
-local icon_theme = require("beautiful.icon_theme")
+local beautiful = require("beautiful")
 local pairs = pairs
 local ipairs = ipairs
 local string = string
@@ -57,7 +57,7 @@ menu_gen.all_categories = {
 --- Find icons for category entries.
 function menu_gen.lookup_category_icons()
     for _, v in pairs(menu_gen.all_categories) do
-        v.icon = icon_theme():find_icon_path(v.icon_name)
+        v.icon = beautiful.get_icon_provider():find_icon_path(v.icon_name)
     end
 end
 
