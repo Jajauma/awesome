@@ -17,150 +17,22 @@ local awful_util = require("awful.util")
 local theme = require("beautiful")
 local lgi = require("lgi")
 local gio = lgi.Gio
-local glib = lgi.GLib
 local wibox = require("wibox")
 local debug = require("gears.debug")
 
 local utils = {}
 
--- NOTE: This icons/desktop files module was written according to the
--- following freedesktop.org specifications:
--- Icons: http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-0.11.html
--- Desktop files: http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html
+-- NOTE: This desktop files module was written according to the following
+-- freedesktop.org specification:
+-- http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html
 
 -- Options section
 
 --- Terminal which applications that need terminal would open in.
 utils.terminal = 'xterm'
 
---- The default icon for applications that don't provide any icon in
--- their .desktop files.
-local default_icon = nil
-
 --- Name of the WM for the OnlyShownIn entry in the .desktop file.
 utils.wm_name = "awesome"
-
--- Private section
-
-local all_icon_sizes = {
-    '128x128' ,
-    '96x96',
-    '72x72',
-    '64x64',
-    '48x48',
-    '36x36',
-    '32x32',
-    '24x24',
-    '22x22',
-    '16x16'
-}
-
---- List of supported icon formats.
-local icon_formats = { "png", "xpm", "svg" }
-
---- Check whether the icon format is supported.
--- @param icon_file Filename of the icon.
--- @return true if format is supported, false otherwise.
-local function is_format_supported(icon_file)
-    for _, f in ipairs(icon_formats) do
-        if icon_file:match('%.' .. f) then
-            return true
-        end
-    end
-    return false
-end
-
-local icon_lookup_path = nil
---- Get a list of icon lookup paths.
--- @treturn table A list of directories, without trailing slash.
-local function get_icon_lookup_path()
-    if not icon_lookup_path then
-        local add_if_readable = function(t, path)
-            if awful_util.dir_readable(path) then
-                table.insert(t, path)
-            end
-        end
-        icon_lookup_path = {}
-        local icon_theme_paths = {}
-        local icon_theme = theme.icon_theme
-        local paths = glib.get_system_data_dirs()
-        table.insert(paths, 1, glib.get_user_data_dir())
-        table.insert(paths, 1, glib.build_filenamev({glib.get_home_dir(),
-                                                     '.icons'}))
-        for _,dir in ipairs(paths) do
-            local icons_dir = glib.build_filenamev({dir, 'icons'})
-            if awful_util.dir_readable(icons_dir) then
-                if icon_theme then
-                    add_if_readable(icon_theme_paths,
-                                    glib.build_filenamev({icons_dir,
-                                                         icon_theme}))
-                end
-                -- Fallback theme.
-                add_if_readable(icon_theme_paths,
-                                glib.build_filenamev({icons_dir, 'hicolor'}))
-            end
-        end
-        for _, icon_theme_directory in ipairs(icon_theme_paths) do
-            for _, size in ipairs(all_icon_sizes) do
-                add_if_readable(icon_lookup_path,
-                                glib.build_filenamev({icon_theme_directory,
-                                                      size, 'apps'}))
-            end
-        end
-        for _,dir in ipairs(paths)do
-            -- lowest priority fallbacks
-            add_if_readable(icon_lookup_path,
-                            glib.build_filenamev({dir, 'pixmaps'}))
-            add_if_readable(icon_lookup_path,
-                            glib.build_filenamev({dir, 'icons'}))
-        end
-    end
-    return icon_lookup_path
-end
-
---- Lookup an icon in different folders of the filesystem.
--- @tparam string icon_file Short or full name of the icon.
--- @treturn string|boolean Full name of the icon, or false on failure.
-function utils.lookup_icon_uncached(icon_file)
-    if not icon_file or icon_file == "" then
-        return false
-    end
-
-    if icon_file:sub(1, 1) == '/' and is_format_supported(icon_file) then
-        -- If the path to the icon is absolute and its format is
-        -- supported, do not perform a lookup.
-        return awful_util.file_readable(icon_file) and icon_file or nil
-    else
-        for _, directory in ipairs(get_icon_lookup_path()) do
-            if is_format_supported(icon_file) and
-                    awful_util.file_readable(directory .. "/" .. icon_file) then
-                return directory .. "/" .. icon_file
-            else
-                -- Icon is probably specified without path and format,
-                -- like 'firefox'. Try to add supported extensions to
-                -- it and see if such file exists.
-                for _, format in ipairs(icon_formats) do
-                    local possible_file = directory .. "/" .. icon_file .. "." .. format
-                    if awful_util.file_readable(possible_file) then
-                        return possible_file
-                    end
-                end
-            end
-        end
-        return false
-    end
-end
-
-local lookup_icon_cache = {}
---- Lookup an icon in different folders of the filesystem (cached).
--- @param icon Short or full name of the icon.
--- @return full name of the icon.
-function utils.lookup_icon(icon)
-    if not lookup_icon_cache[icon] and lookup_icon_cache[icon] ~= false then
-        lookup_icon_cache[icon] = utils.lookup_icon_uncached(icon)
-    end
-    return lookup_icon_cache[icon] or default_icon
-end
 
 --- Parse a .desktop file.
 -- @param file The .desktop file.
