@@ -38,10 +38,6 @@ Naughty configuration - a table containing common popup settings.
 @tfield[opt=apply_dpi(4)] int padding Space between popups and edge of the
   workarea.
 @tfield[opt=apply_dpi(1)] int spacing Spacing between popups.
-@tfield[opt={"/usr/share/pixmaps/"}] table icon_dirs List of directories
-  that will be checked by `getIcon()`.
-@tfield[opt={ "png", "gif" }] table icon_formats List of formats that will be
-  checked by `getIcon()`.
 @tfield[opt] function notify_callback Callback used to modify or reject
 notifications, e.g.
     naughty.config.notify_callback = function(args)
@@ -59,8 +55,6 @@ notifications, e.g.
 naughty.config = {
     padding = dpi(4),
     spacing = dpi(1),
-    icon_dirs = { "/usr/share/pixmaps/", },
-    icon_formats = { "png", "gif" },
     notify_callback = nil,
 }
 
@@ -409,7 +403,7 @@ end
 -- @int[opt=auto] args.height Popup height.
 -- @int[opt=auto] args.width Popup width.
 -- @string[opt=beautiful.font or awesome.font] args.font Notification font.
--- @string[opt] args.icon Path to icon.
+-- @string[opt] args.icon Icon name or path to icon.
 -- @int[opt] args.icon_size Desired icon size in px.
 -- @string[opt=`beautiful.fg_focus` or `'#ffffff'`] args.fg Foreground color.
 -- @string[opt=`beautiful.bg_focus` or `'#535d6c'`] args.bg Background color.
@@ -573,7 +567,7 @@ function naughty.notify(args)
         end
         -- try to guess icon if the provided one is non-existent/readable
         if type(icon) == "string" and not util.file_readable(icon) then
-            icon = util.geticonpath(icon, naughty.config.icon_formats, naughty.config.icon_dirs, icon_size) or icon
+            icon = bt.get_icon_provider():find_icon_path(icon, icon_size) or icon
         end
 
         -- is the icon file readable?
