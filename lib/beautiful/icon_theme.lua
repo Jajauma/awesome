@@ -78,35 +78,6 @@ local icon_theme = { mt = {} }
 
 local index_theme_cache = {}
 
-local gtk_impl = {
-    icon_theme = nil,
-
-    init = function(self, icon_theme_name)
-        local gtk = require("lgi").Gtk
-
-        if gtk ~= nil then
-            if icon_theme_name ~= nil then
-                self.icon_theme = gtk.IconTheme.new()
-                self.icon_theme:set_custom_theme(icon_theme_name)
-            else
-                self.icon_theme = gtk.IconTheme.get_default()
-            end
-        end
-    end,
-
-    find_icon_path = function(self, icon_name, icon_size)
-        if self.icon_theme ~= nil then
-            local icon_info = self.icon_theme:lookup_icon(icon_name,
-                                                          icon_size, {})
-            if icon_info then
-                return icon_info:get_filename()
-            end
-        end
-
-        return nil
-    end
-}
-
 --- Class constructor of `icon_theme`
 -- @tparam string icon_theme_name Internal name of icon theme
 -- @tparam table base_directories Paths used for lookup
@@ -131,9 +102,6 @@ icon_theme.new = function(icon_theme_name, base_directories)
             self.base_directories)
     end
     self.index_theme = index_theme_cache[self.icon_theme_name][cache_key]
-
-    -- Check if GTK+ implementation is available.
-    gtk_impl:init(self.icon_theme_name)
 
     return setmetatable(self, { __index = icon_theme })
 end
@@ -276,10 +244,7 @@ function icon_theme:find_icon_path(icon_name, icon_size)
         end
     end
 
-    -- Use GTK+ faster approach first if it is available or fall back to the
-    -- slower native Lua implementation otherwise.
-    local filename = gtk_impl:find_icon_path(icon_name, icon_size)
-                     or find_icon_path_helper(self, icon_name, icon_size)
+    local filename = find_icon_path_helper(self, icon_name, icon_size)
     if filename then
         return filename
     end
