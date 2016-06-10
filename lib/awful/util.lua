@@ -220,6 +220,41 @@ function util.getdir(d)
     end
 end
 
+--- Search for an icon and return the full path.
+-- It searches for the icon path under the given directories with respect to the
+-- given extensions for the icon filename.
+-- @deprecated awful.util.geticonpath
+-- @param iconname The name of the icon to search for.
+-- @param exts Table of image extensions allowed, otherwise { 'png', gif' }
+-- @param dirs Table of dirs to search, otherwise { '/usr/share/pixmaps/' }
+-- @tparam[opt] string size The size. If this is specified, subdirectories `x`
+--   of the dirs are searched first.
+function util.geticonpath(iconname, exts, dirs, size)
+    util.deprecate("beautiful.get_icon_provider")
+
+    exts = exts or { 'png', 'gif' }
+    dirs = dirs or { '/usr/share/pixmaps/', '/usr/share/icons/hicolor/' }
+    local icontypes = { 'apps', 'actions',  'categories',  'emblems',
+        'mimetypes',  'status', 'devices', 'extras', 'places', 'stock' }
+    for _, d in pairs(dirs) do
+        local icon
+        for _, e in pairs(exts) do
+            icon = d .. iconname .. '.' .. e
+            if util.file_readable(icon) then
+                return icon
+            end
+            if size then
+                for _, t in pairs(icontypes) do
+                    icon = string.format("%s%ux%u/%s/%s.%s", d, size, size, t, iconname, e)
+                    if util.file_readable(icon) then
+                        return icon
+                    end
+                end
+            end
+        end
+    end
+end
+
 --- Check if a file exists, is not readable and not a directory.
 -- @param filename The file path.
 -- @return True if file exists and is readable.
