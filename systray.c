@@ -49,8 +49,8 @@ systray_init(void)
                       xscreen->root,
                       -1, -1, 1, 1, 0,
                       XCB_COPY_FROM_PARENT, xscreen->root_visual,
-                      XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK, (const uint32_t [])
-                      { xscreen->black_pixel, XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT });
+                      XCB_CW_BACK_PIXEL, (const uint32_t [])
+                      { xscreen->black_pixel });
     xwindow_set_class_instance(globalconf.systray.window);
     xwindow_set_name_static(globalconf.systray.window, "Awesome systray window");
 
